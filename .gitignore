@@ -11,5 +11,3 @@ obj/
 !revit-bridge/dist/
 
 
-# local submission notes, not part of the package
-SUBMISSION-ANSWERS.md
