@@ -1,7 +1,7 @@
 {
   "name": "revit",
   "description": "Query and edit the Autodesk Revit model open on your Windows desktop. 88 tools covering elements, parameters, geometry, sheets, views, schedules and PDF export.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "rui-branco",
     "url": "https://github.com/rui-branco"
