@@ -11,20 +11,27 @@ it, and produce a full drawing set in plain language — levels and elements,
 sheets and schedules, views and PDF exports.
 
 **Windows · Revit 2025, 2026 or 2027 · Node.js 18+.** The Revit add-in ships
-precompiled, so there is nothing to build and no .NET SDK to install.
+precompiled, so there is nothing to build and no .NET SDK to install. `npm` is
+never run at startup — the Desktop extension carries its dependencies, and the
+Claude Code route fetches the package once via `npx`.
 
 ## Installation
 
 ### 1. Register the server
 
-#### Claude Desktop — one click
+#### Claude Desktop — extension
 
-**[⬇ Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb)**,
-then **double-click it**. Claude Desktop opens its extension installer; press
-**Install**. Nothing to edit, nothing to type.
+1. **[⬇ Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb)**
+2. In Claude Desktop, open **Settings → Extensions**
+3. **Drag the `.mcpb` file onto that window**, then press **Install**
 
-The extension bundles the server and the Revit add-in together. Settings for the
-bridge URL and request timeout are exposed in **Settings → Extensions → Revit**.
+No JSON to edit and nothing to download at runtime: the extension carries the
+server, its dependencies and the Revit add-in. Bridge URL and request timeout
+are exposed as settings under **Settings → Extensions → Revit**.
+
+> Double-clicking the file only works if Claude Desktop has registered the
+> `.mcpb` file type; on many installs it has not, so use the drag-and-drop step
+> above.
 
 <details>
 <summary>Or configure it by hand</summary>
