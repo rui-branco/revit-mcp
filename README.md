@@ -6,15 +6,27 @@
 [![Tests](https://img.shields.io/badge/tests-507%20passing-success)](#development)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-MCP server for **Autodesk Revit**. Read and edit the model that is open on your
-desktop from Claude Code, Claude Desktop, or any other MCP client.
+**Drive Autodesk Revit from Claude.** `revit-mcp` connects an MCP client to the
+Revit model open on your desktop, so you can query it, edit it, and produce a
+full drawing set in plain language — levels and elements, sheets and schedules,
+views and PDF exports.
 
-```
-MCP client  ──stdio──▶  revit-mcp (Node)  ──HTTP──▶  bridge add-in (C#, inside Revit.exe)  ──▶  the open model
-```
+Revit has no external API: the Revit API is in-process .NET that exists only
+inside `Revit.exe` and may only be called from its main thread. So this project
+has two halves — a Node MCP server, and a C# add-in that Revit loads at startup
+and that listens on loopback HTTP. The add-in ships precompiled, so installing
+it is a file copy and no .NET SDK is needed.
 
-Revit has no external API, so the bridge add-in is required. It ships
-precompiled — no .NET SDK needed.
+```mermaid
+flowchart LR
+    A["MCP client<br/>Claude Code or Claude Desktop"]
+    B["revit-mcp<br/>Node server"]
+    C["Bridge add-in<br/>C#, inside Revit.exe"]
+    D["The open model"]
+    A -- "stdio" --> B
+    B -- "HTTP 127.0.0.1:48884" --> C
+    C -- "Revit API, main thread" --> D
+```
 
 ## Features
 
