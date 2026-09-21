@@ -1,64 +1,17 @@
 # revit-mcp
 
 [![Revit](https://img.shields.io/badge/Revit-2025%20%7C%202026%20%7C%202027-006666)](https://www.autodesk.com/products/revit/overview)
-[![Platform](https://img.shields.io/badge/platform-Windows-0078D4)](#requirements)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D4)](#installation)
 [![Node.js](https://img.shields.io/badge/node-%E2%89%A518-339933)](https://nodejs.org)
 [![Tests](https://img.shields.io/badge/tests-507%20passing-success)](#development)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**Drive Autodesk Revit from Claude.** `revit-mcp` connects an MCP client to the
-Revit model open on your desktop, so you can query it, edit it, and produce a
-full drawing set in plain language — levels and elements, sheets and schedules,
-views and PDF exports.
+**Drive Autodesk Revit from Claude.** Query the model open on your desktop, edit
+it, and produce a full drawing set in plain language — levels and elements,
+sheets and schedules, views and PDF exports.
 
-Revit has no external API: the Revit API is in-process .NET that exists only
-inside `Revit.exe` and may only be called from its main thread. So this project
-has two halves — a Node MCP server, and a C# add-in that Revit loads at startup
-and that listens on loopback HTTP. The add-in ships precompiled, so installing
-it is a file copy and no .NET SDK is needed.
-
-```mermaid
-flowchart LR
-    A["MCP client<br/>Claude Code or Claude Desktop"]
-    B["revit-mcp<br/>Node server"]
-    C["Bridge add-in<br/>C#, inside Revit.exe"]
-    D["The open model"]
-    A -- "stdio" --> B
-    B -- "HTTP 127.0.0.1:48884" --> C
-    C -- "Revit API, main thread" --> D
-```
-
-## Features
-
-- **Query the model** — levels, categories, element filters, selection, and
-  parameters, with paging and total counts.
-- **Edit the model** — create levels, walls, floors, toposolids and pipes,
-  place families, planting and openings, set parameters, delete elements.
-- **Build drawings** — sheets, views, sections, plans, legends, schedules,
-  title blocks, and sheet collections.
-- **Control graphics** — view templates, category overrides, crop regions,
-  display styles, sun and background settings.
-- **Export** — view images and native multi-sheet PDFs.
-- **Runs unattended** — modal dialogs and transaction warnings are answered by
-  the bridge and recorded for you to read back.
-- **Hot reload** — rebuild the C# endpoints and reload them into a running
-  Revit with the model still open.
-- **One call, one undo step** — every write is a single transaction group.
-
-## Requirements
-
-| | |
-| --- | --- |
-| **OS** | Windows (Revit has no macOS build) |
-| **Revit** | 2025, 2026 or 2027 |
-| **Node.js** | 18 or newer |
-| **.NET SDK** | Not required — only to build the C# side yourself |
-
-One prebuilt add-in covers all three Revit versions: it is compiled against the
-Revit 2025 reference assemblies, which load unchanged in 2026 and 2027. Tested
-end to end against Revit 2027.3. **Revit LT is unsupported** (no add-in API) and
-**2024 and earlier are refused** (.NET Framework 4.8 cannot load a
-`net8.0-windows` assembly).
+**Windows · Revit 2025, 2026 or 2027 · Node.js 18+.** The Revit add-in ships
+precompiled, so there is nothing to build and no .NET SDK to install.
 
 ## Installation
 
@@ -163,6 +116,24 @@ delete the entry from `claude_desktop_config.json`.
 
 </details>
 
+<details>
+<summary><b>Version support and prerequisites</b></summary>
+
+| | |
+| --- | --- |
+| **OS** | Windows (Revit has no macOS build) |
+| **Revit** | 2025, 2026 or 2027 |
+| **Node.js** | 18 or newer |
+| **.NET SDK** | Not required — only to build the C# side yourself |
+
+One prebuilt add-in covers all three Revit versions: it is compiled against the
+Revit 2025 reference assemblies, which load unchanged in 2026 and 2027. Tested
+end to end against Revit 2027.3. **Revit LT is unsupported** (no add-in API) and
+**2024 and earlier are refused** (.NET Framework 4.8 cannot load a
+`net8.0-windows` assembly).
+
+</details>
+
 ## Usage
 
 With a model open in Revit, ask in plain language:
@@ -184,6 +155,23 @@ Two habits worth keeping:
   requests. Each call is one undo step.
 - After a batch of writes, ask for `revit_diagnostics`. Warnings the bridge
   resolved silently are recorded there and nowhere else.
+
+## Features
+
+- **Query the model** — levels, categories, element filters, selection, and
+  parameters, with paging and total counts.
+- **Edit the model** — create levels, walls, floors, toposolids and pipes,
+  place families, planting and openings, set parameters, delete elements.
+- **Build drawings** — sheets, views, sections, plans, legends, schedules,
+  title blocks, and sheet collections.
+- **Control graphics** — view templates, category overrides, crop regions,
+  display styles, sun and background settings.
+- **Export** — view images and native multi-sheet PDFs.
+- **Runs unattended** — modal dialogs and transaction warnings are answered by
+  the bridge and recorded for you to read back.
+- **Hot reload** — rebuild the C# endpoints and reload them into a running
+  Revit with the model still open.
+- **One call, one undo step** — every write is a single transaction group.
 
 ## Tools
 
