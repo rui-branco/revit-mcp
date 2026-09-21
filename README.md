@@ -3,16 +3,16 @@
 [![Revit](https://img.shields.io/badge/Revit-2025%20%7C%202026%20%7C%202027-006666)](https://www.autodesk.com/products/revit/overview)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078D4)](#installation)
 [![Node.js](https://img.shields.io/badge/node-%E2%89%A518-339933)](https://nodejs.org)
-[![Tests](https://img.shields.io/badge/tests-507%20passing-success)](#development)
+[![Tests](https://img.shields.io/badge/tests-521%20passing-success)](#development)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 **Drive Autodesk Revit from Claude.** Query the model open on your desktop, edit
 it, and produce a full drawing set in plain language — levels and elements,
 sheets and schedules, views and PDF exports.
 
-**Windows · Revit 2025, 2026 or 2027.** The add-in ships precompiled — nothing
-to build, no .NET SDK. The Claude Desktop extension needs no Node.js either; the
-Claude Code route uses `npx`, so it wants Node 18+.
+**Windows · Revit 2025, 2026 or 2027 · Node.js 18+.** The Revit add-in ships
+precompiled and installs itself on first run — nothing to build, no .NET SDK,
+and nothing to copy by hand.
 
 ## Installation
 
@@ -93,12 +93,22 @@ arguments and needs no environment beyond the optional
 
 </details>
 
-### 2. Install the Revit add-in
+### 2. Install the Revit add-in — automatic
 
-Ask Claude to **install the Revit bridge**. That runs `revit_install_bridge`,
-which copies the add-in and its `.addin` manifest into
-`%APPDATA%\Autodesk\Revit\Addins\<version>\` for every Revit it finds. Revit
-need not be running, and re-running is safe.
+Nothing to do. The server installs the add-in itself the first time it starts:
+it looks for `RevitMcpBridge.addin` in
+`%APPDATA%\Autodesk\Revit\Addins\<version>\` and, when no Revit has it, copies
+the bundled add-in and its manifest into place for every Revit it finds. That
+runs in the background on Windows, so it never delays or breaks the server, and
+once the add-in is there it does nothing at all.
+
+**If it is turned off or fails**, ask Claude to **install the Revit bridge**.
+That runs `revit_install_bridge` — the same installer, on demand. Revit need not
+be running, and re-running is safe. Auto-install is off whenever
+`REVIT_MCP_NO_AUTO_INSTALL` is set; see [Configuration](#configuration).
+
+Either way the add-in is only on disk at this point. Revit does not load it
+until it restarts, which is step 3.
 
 ### 3. Restart Revit and approve the add-in
 
@@ -408,6 +418,7 @@ Two habits worth keeping:
 | `REVIT_MCP_URL` | `http://localhost:48884/revit-mcp` | Bridge base URL. Change it for a second Revit instance. |
 | `REVIT_MCP_TIMEOUT` | `30000` | Per-request timeout, in milliseconds. |
 | `REVIT_MCP_BRIDGE_TIMEOUT_MS` | `30000` | Read by the add-in: how long a request waits for Revit's main thread. Clamped to 1–600 s. |
+| `REVIT_MCP_NO_AUTO_INSTALL` | unset | Set it to `1` to stop the server installing the add-in on startup. `revit_install_bridge` still installs it on demand. Either way, Revit must be restarted before it loads. |
 
 ## Unattended operation
 
@@ -484,7 +495,7 @@ npm install
 npm test
 ```
 
-`npm test` is `node --test` over `tests/` — 507 tests. It touches no Revit and
+`npm test` is `node --test` over `tests/` — 521 tests. It touches no Revit and
 opens no socket: the HTTP layer is stubbed and the tools are exercised through a
 real MCP client over an in-memory transport.
 

@@ -3,6 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { pathToFileURL } from "url";
+import { autoInstallBridge } from "./lib/auto-install.js";
 import { createBridge } from "./lib/bridge.js";
 import { registerReadTools } from "./lib/tools/read.js";
 import { registerWriteTools } from "./lib/tools/write.js";
@@ -110,6 +111,11 @@ async function main() {
   const server = createRevitServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
+
+  // Never awaited: the transport is already up, and a slow or failing install
+  // must not delay the handshake or stop the server from serving tool calls.
+  // It is startup only, so it stays out of createRevitServer().
+  autoInstallBridge();
 
   process.stderr.write("Revit MCP server running on stdio\n");
 }
