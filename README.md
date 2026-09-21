@@ -18,44 +18,47 @@ Claude Code route uses `npx`, so it wants Node 18+.
 
 ### 1. Register the server
 
-#### Any Claude app — plugin (recommended)
-
-Two commands, and it **updates itself** from then on:
+Two commands, in **Claude Code or Claude Desktop** — same plugin, either app:
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
 /plugin install revit@revit-tools
 ```
 
-Works in Claude Code, Claude Desktop and Cowork. Later versions arrive via
-`/plugin update` — no files to download, unlike the extension below.
-
-#### Claude Desktop — extension
-
-Claude Desktop installs this as a **Desktop Extension**, Anthropic's packaged
-format for MCP servers. No JSON, no terminal.
-
-1. **[⬇ Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb)**
-2. Open Claude Desktop → **Settings → Extensions**
-3. **Drag `revit-mcp.mcpb` onto the window** (or use **Advanced settings →
-   Install extension…** and pick the file)
-4. Press **Install**
-
-The extension carries the server, its dependencies and the Revit add-in, and
-runs on Claude Desktop's built-in Node runtime — **neither Node.js nor npm has
-to be installed**. Bridge URL and request timeout appear under **Settings →
-Extensions → Revit**.
-
-> Double-clicking the file works only where Claude Desktop has registered the
-> `.mcpb` file type. Many installs have not, so prefer the drag-and-drop or
-> **Install extension…** route above.
+That is the whole step. The plugin updates itself from this repo, so there is
+nothing to re-download when a new version ships; `/plugin update` pulls it
+early if you do not want to wait.
 
 <details>
-<summary>Or configure it by hand</summary>
+<summary><b>Other ways to install</b></summary>
 
-Open **Settings → Developer → Edit Config** (that is
-`%APPDATA%\Claude\claude_desktop_config.json`) and add the `revit` entry,
-keeping any servers already there:
+These exist for completeness. The plugin above is the supported path, and the
+only one that updates on its own.
+
+**Claude Code, without the plugin**
+
+```bash
+claude mcp add revit --scope user -- npx -y @rui.branco/revit-mcp
+```
+
+`--scope user` enables it in every project; `--scope project` writes it to the
+repo's `.mcp.json` instead, to share with a team.
+
+**Claude Desktop, as a Desktop Extension (.mcpb)**
+
+[Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb),
+then **Settings → Extensions → Advanced settings → Install extension…** and
+pick the file. It bundles the server, its dependencies and the Revit add-in,
+and runs on Claude Desktop's built-in Node runtime, so neither Node.js nor npm
+is needed. **A sideloaded extension never auto-updates** — every new version
+means downloading and installing the file again, which is why the plugin is
+preferred.
+
+**Claude Desktop, by hand**
+
+**Settings → Developer → Edit Config** opens
+`%APPDATA%\Claude\claude_desktop_config.json`. Add the `revit` entry, keeping
+any servers already there:
 
 ```json
 {
@@ -68,31 +71,16 @@ keeping any servers already there:
 }
 ```
 
-Then **quit Claude Desktop from the system tray** — closing the window is not
-enough — and reopen it.
+Then quit Claude Desktop from the system tray — closing the window is not
+enough — and reopen it. If the server shows as failed, Claude Desktop could not
+find `npx` on its `PATH`: use an absolute path (`where.exe npx.cmd` prints
+yours).
 
-If the server shows as failed, Claude Desktop could not find `npx` on its
-`PATH`. Use absolute paths instead (`where.exe npx.cmd` prints yours), or point
-`command` at your `node.exe` with `args` of
-`["C:\\path\\to\\revit-mcp\\index.js"]`.
+**Any other MCP client**
 
-</details>
-
-#### Claude Code — one command
-
-```bash
-claude mcp add revit --scope user -- npx -y @rui.branco/revit-mcp
-```
-
-`--scope user` enables it in every project; `--scope project` writes it to the
-repo's `.mcp.json` instead, to share with a team. Check it with `claude mcp list`.
-
-<details>
-<summary><b>Other MCP clients</b></summary>
-
-Any stdio MCP client works. Use `npx -y @rui.branco/revit-mcp` as the
-server command; it takes no arguments and needs no environment beyond the
-optional [configuration](#configuration).
+Run `npx -y @rui.branco/revit-mcp` as the server command. It takes no
+arguments and needs no environment beyond the optional
+[configuration](#configuration).
 
 </details>
 
