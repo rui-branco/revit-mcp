@@ -1,6 +1,6 @@
 {
   "name": "@rui.branco/revit-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for Autodesk Revit: read and edit the open model from an MCP client, via a bundled C# bridge add-in that runs inside Revit",
   "keywords": [
     "revit",
