@@ -26,10 +26,7 @@ Do this on the PC that has Revit. Takes about a minute.
 2. Paste `rui-branco/revit-mcp`
 3. Click **Install** on **Revit**
 
-**Claude Cowork** — same steps as Claude Desktop above. They share one
-Settings page, so adding it once covers both.
-
-**Claude Code**
+**Claude Cowork and Claude Code** — type these two lines:
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
