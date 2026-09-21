@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+.idea/
+*.pyc
+__pycache__/
+
+# C# build artefacts. revit-bridge/dist/ is NOT one of these: it is the
+# prebuilt add-in that ships on npm, and it is committed on purpose.
+bin/
+obj/
+!revit-bridge/dist/

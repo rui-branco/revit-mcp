@@ -1,0 +1,50 @@
+{
+  "name": "@rui.branco/revit-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Autodesk Revit: read and edit the open model from an MCP client, via a bundled C# bridge add-in that runs inside Revit",
+  "keywords": [
+    "revit",
+    "mcp",
+    "autodesk",
+    "bim",
+    "model-context-protocol",
+    "claude"
+  ],
+  "license": "MIT",
+  "author": "Rui Branco",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "revit-mcp": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rui-branco/revit-mcp.git"
+  },
+  "homepage": "https://github.com/rui-branco/revit-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/rui-branco/revit-mcp/issues"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "revit-bridge/install.ps1",
+    "revit-bridge/dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build:bridge": "node scripts/build-bridge.mjs",
+    "prepublishOnly": "npm run build:bridge && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

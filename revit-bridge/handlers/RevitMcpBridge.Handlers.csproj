@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The reloadable half of the bridge: the route table and every endpoint. Revit never loads
+       this assembly - the loader (RevitMcpBridge.dll) does, into a collectible
+       AssemblyLoadContext, from a shadow copy. That is what lets /revit-mcp/reload swap in a
+       freshly built one without restarting Revit.
+
+       It is NOT built by building RevitMcpBridge.csproj as a dependency - the dependency runs the
+       other way, and it has to: the loader must never reference this assembly at compile time or
+       the load context could never unload. The loader's csproj invokes this one from an
+       AfterTargets="Build" hook instead, so one `dotnet build` still produces both. -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <OutputType>Library</OutputType>
+    <AssemblyName>RevitMcpBridge.Handlers</AssemblyName>
+    <RootNamespace>RevitMcpBridge</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Version>1.0.0</Version>
+    <Company>revit-mcp</Company>
+    <Product>Revit MCP Bridge</Product>
+    <Description>Reloadable routing and endpoint logic for the Revit MCP Bridge.</Description>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+
+    <!-- Straight into the loader's output folder. install.ps1 copies whatever sits next to
+         RevitMcpBridge.dll, so landing here is what gets this assembly installed at all. -->
+    <BaseOutputPath>..\bin\</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- A file reference, deliberately not a ProjectReference: a ProjectReference here plus the
+         build hook in the loader's csproj would be a build cycle. Private=false because the loader
+         is already in that folder - Revit loaded it. -->
+    <Reference Include="RevitMcpBridge">
+      <HintPath>..\bin\$(Configuration)\$(TargetFramework)\RevitMcpBridge.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Same reference-only Revit API as the loader: Revit supplies these at runtime and a copy
+         next to the add-in causes type-identity failures. See the loader's csproj. -->
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2025.0.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+      <Private>false</Private>
+      <IncludeAssets>compile; build; buildMultitargeting; buildTransitive; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

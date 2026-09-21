@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Revit 2025/2026/2027 all host .NET 8 add-ins. The installed SDK (10.x) builds this
+         down-level; do not bump the TFM without checking which Revit releases still load it. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <OutputType>Library</OutputType>
+    <AssemblyName>RevitMcpBridge</AssemblyName>
+    <RootNamespace>RevitMcpBridge</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Version>1.0.0</Version>
+    <Company>revit-mcp</Company>
+    <Product>Revit MCP Bridge</Product>
+    <Description>In-process HTTP bridge that exposes the Revit API to a Node MCP server.</Description>
+    <!-- Nothing from NuGet may land next to the add-in: Revit owns the API assemblies. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- handlers\ is its own assembly (RevitMcpBridge.Handlers.dll), loaded at runtime into a
+         collectible AssemblyLoadContext so it can be swapped without restarting Revit. It must not
+         be compiled into the loader, and the loader must never reference it: a compile-time
+         reference would pin it in the default context and the reload could never unload. -->
+    <Compile Remove="handlers\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Community reference-assembly package: ships RevitAPI.dll / RevitAPIUI.dll (lib/net8.0) so
+         this project compiles on a machine with no Revit installed.
+         Pinned to the LOWEST supported release (2025) on purpose: an add-in compiled against 2025
+         loads in 2026 and 2027, but one compiled against 2027 would break on 2025.
+         ExcludeAssets=runtime + Private=false is the "reference only, never copy" switch - Revit
+         supplies these assemblies at runtime and copying them causes type-identity failures. -->
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2025.0.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+      <Private>false</Private>
+      <IncludeAssets>compile; build; buildMultitargeting; buildTransitive; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- The handlers assembly references this one, so it cannot be a ProjectReference (that would be
+       a cycle) and it is not built as a dependency. Building it here, after this project, keeps
+       one `dotnet build RevitMcpBridge.csproj` producing both halves into the same output folder -
+       which is what install.ps1 and scripts\build-bridge.mjs both rely on. -->
+  <Target Name="BuildHandlers" AfterTargets="Build">
+    <!-- Restore as well as Build: this project is outside the restore graph of the one being
+         built (no ProjectReference, deliberately), so nothing else would ever restore it. -->
+    <MSBuild Projects="handlers\RevitMcpBridge.Handlers.csproj"
+             Targets="Restore;Build"
+             Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <!-- Belt and braces: fail loudly if a Revit assembly ever leaks into the output folder. -->
+  <Target Name="AssertNoRevitApiInOutput" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Wildcards on purpose: a literal Include creates the item even when the file is absent. -->
+      <_LeakedRevitAssembly Include="$(TargetDir)RevitAPI*.dll" />
+      <_LeakedRevitAssembly Include="$(TargetDir)AdWindows*.dll" />
+      <_LeakedRevitAssembly Include="$(TargetDir)UIFramework*.dll" />
+    </ItemGroup>
+    <Error Condition="'@(_LeakedRevitAssembly)' != ''"
+           Text="Revit API assemblies were copied to the output directory (@(_LeakedRevitAssembly)). They must stay reference-only (ExcludeAssets=runtime / Private=false); Revit provides them at runtime." />
+  </Target>
+
+</Project>
