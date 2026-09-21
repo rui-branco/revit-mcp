@@ -12,3 +12,6 @@ obj/
 
 # built desktop extension bundle
 *.mcpb
+
+# local submission notes, not part of the package
+SUBMISSION-ANSWERS.md
