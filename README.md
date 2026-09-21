@@ -1,36 +1,19 @@
 # revit-mcp
 
-An MCP server for Autodesk Revit. It lets an MCP client — Claude Code, Claude
-Desktop, or anything else that speaks MCP — read and edit the model that is
-currently open in Revit: list levels and categories, query and filter elements,
-read and write parameters, create levels and walls, delete elements. It can also
-drive the document itself — start a project from a template, open, save and
-close models, lay out sheets.
+[![Revit](https://img.shields.io/badge/Revit-2025%20%7C%202026%20%7C%202027-006666)](https://www.autodesk.com/products/revit/overview)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D4)](#windows-only-by-nature)
+[![Node.js](https://img.shields.io/badge/node-%E2%89%A518-339933)](https://nodejs.org)
+[![Tests](https://img.shields.io/badge/tests-507%20passing-success)](#development)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-It is built to run **unattended**: Revit's modal dialogs and its transaction
-warnings are answered by the bridge instead of parking Revit until somebody
-clicks, and every one of them is recorded for you to read back. See
-[Unattended operation](#unattended-operation) — that record is not optional
-reading.
+**Read and edit the Autodesk Revit model that is open on your desktop, from Claude
+or any other MCP client.**
 
-> **Status, honestly.** The Node half is covered by tests and the C# add-in
-> compiles clean against the Revit 2025 API. The bridge's **runtime** behaviour
-> inside a live Revit has been compile-verified but not yet exercised against a
-> running Revit session — including dialog auto-dismiss and the failure
-> preprocessor, both of which need a real Revit to raise a real dialog. The hot
-> reload's load-context mechanics (shadow copy, unload, leak detection) are
-> verified outside Revit; their behaviour *inside* Revit is not. Treat the first
-> run as a first run: work on a copy of your model.
-
-## How it works
-
-Revit has **no external API**. There is no REST endpoint, no CLI, no COM
-automation surface — the Revit API is in-process .NET that only exists inside
-`Revit.exe`, and it may only be called from Revit's own main thread. No separate
-process can reach it. So anything that touches a model has to be *code Revit
-itself loaded*. That is why this project has two halves: a Node MCP server, and
-a small C# add-in that Revit loads at startup and that listens on loopback HTTP
-so the Node half has something to talk to.
+`revit-mcp` exposes the running Revit session as MCP tools: list levels and
+categories, query and filter elements, read and write parameters, create levels,
+walls, floors and toposolids, place families and planting, build sheets,
+schedules, sections and views, export images and PDFs, and drive the document
+itself — new, open, save, close.
 
 ```
 MCP client (Claude Code, Claude Desktop, ...)
@@ -46,8 +29,49 @@ Revit bridge add-in   C#, running INSIDE Revit.exe
 the open model
 ```
 
+It is built to run **unattended**: Revit's modal dialogs and its transaction
+warnings are answered by the bridge instead of parking Revit until somebody
+clicks, and every one of them is recorded for you to read back. See
+[Unattended operation](#unattended-operation) — that record is not optional
+reading.
+
+> **Status, honestly.** The Node half is covered by 507 tests and the C# add-in
+> compiles clean with 0 warnings. The full chain — install, dialog handling, the
+> transaction failure preprocessor, and hot reload (`unloadedPrevious: true`) —
+> has been exercised against a **live Revit 2027.3 session**, driving a real
+> project from empty model to an exported 13-sheet PDF set. Revit **2025 and
+> 2026 are compile-verified but have not been exercised live**; one binary
+> covers all three, so they are expected to work, but treat a first run as a
+> first run and work on a copy of your model.
+
+## Contents
+
+- [Why an add-in is required](#why-an-add-in-is-required)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Claude Code](#claude-code)
+  - [Claude Desktop](#claude-desktop)
+  - [Other MCP clients](#other-mcp-clients)
+- [Tools](#tools)
+- [Unattended operation](#unattended-operation)
+- [Environment variables](#environment-variables)
+- [Troubleshooting](#troubleshooting)
+- [Security](#security)
+- [Development](#development)
+- [License](#license)
+
+## Why an add-in is required
+
+Revit has **no external API**. There is no REST endpoint, no CLI, no COM
+automation surface — the Revit API is in-process .NET that only exists inside
+`Revit.exe`, and it may only be called from Revit's own main thread. No separate
+process can reach it. So anything that touches a model has to be *code Revit
+itself loaded*. That is why this project has two halves: a Node MCP server, and
+a small C# add-in that Revit loads at startup and that listens on loopback HTTP
+so the Node half has something to talk to.
+
 The add-in ships **precompiled** with this package, so installing it is a file
-copy — see [Install](#install).
+copy — no .NET SDK required.
 
 ### Windows only, by nature
 
@@ -57,79 +81,155 @@ simply has nothing to talk to.
 
 ## Requirements
 
-- **Windows.**
-- **Autodesk Revit 2025, 2026 or 2027.** One prebuilt add-in covers all three:
-  it is compiled against the Revit 2025 reference assemblies, which load
-  unchanged in 2026 and 2027.
-  - **Revit LT is not supported and never will be** — it has no add-in API at
-    all, so there is nothing for the bridge to attach to.
-  - **Revit 2024 and earlier are refused** by the installer. They host add-ins
-    on .NET Framework 4.8 and physically cannot load this `net8.0-windows`
-    assembly.
-- **Node.js 18 or newer.**
-- **The .NET SDK is NOT required.** The compiled add-in is bundled in the npm
-  package. You only need the SDK if you want to build the C# side yourself —
-  see [Development](#development).
+| | |
+| --- | --- |
+| **OS** | Windows |
+| **Revit** | 2025, 2026 or 2027 — one prebuilt add-in covers all three |
+| **Node.js** | 18 or newer |
+| **.NET SDK** | **Not required.** Only for building the C# side yourself — see [Development](#development) |
 
-## Install
+- The add-in is compiled against the **Revit 2025 reference assemblies**, which
+  load unchanged in 2026 and 2027 — which is why one binary covers all three.
+- **Revit LT is not supported and never will be** — it has no add-in API at all,
+  so there is nothing for the bridge to attach to.
+- **Revit 2024 and earlier are refused** by the installer. They host add-ins on
+  .NET Framework 4.8 and physically cannot load this `net8.0-windows` assembly.
 
-1. **Register the MCP server with your client.** For Claude Code, add this to
-   your `.claude.json` under `mcpServers` (Claude Desktop uses the same shape
-   in `claude_desktop_config.json`):
+## Installation
+
+Installation is two things: registering the MCP server with your client, then
+installing the bridge add-in into Revit. Pick your client below for step 1, then
+follow steps 2–4, which are the same for everyone.
+
+> **Not yet on npm.** Install straight from GitHub with
+> `npx -y github:rui-branco/revit-mcp`, as shown below. Once the package is
+> published, `npx -y @rui.branco/revit-mcp` will work the same way.
+
+### Step 1 — Register the MCP server
+
+#### Claude Code
+
+One command:
+
+```bash
+claude mcp add revit --scope user -- npx -y github:rui-branco/revit-mcp
+```
+
+`--scope user` makes it available in every project. Use `--scope project`
+instead to commit it to a repo's `.mcp.json` and share it with your team.
+
+Verify it registered:
+
+```bash
+claude mcp list
+```
+
+<details>
+<summary>Or configure it by hand</summary>
+
+Add this to `~/.claude.json` under `mcpServers`:
+
+```json
+{
+  "mcpServers": {
+    "revit": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "github:rui-branco/revit-mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+</details>
+
+#### Claude Desktop
+
+1. Open **Settings → Developer → Edit Config**, which opens
+   `%APPDATA%\Claude\claude_desktop_config.json`.
+2. Add the `revit` server. Keep any servers already in the file:
 
    ```json
    {
      "mcpServers": {
        "revit": {
-         "type": "stdio",
          "command": "npx",
-         "args": ["-y", "@rui.branco/revit-mcp"],
-         "env": {}
+         "args": ["-y", "github:rui-branco/revit-mcp"]
        }
      }
    }
    ```
 
-   Nothing to clone and nothing to install by hand — `npx -y` fetches the
-   package on first use.
+3. **Restart Claude Desktop completely** — close it from the system tray, not
+   just the window. It only reads that file at startup.
+4. The Revit tools then appear under the tools icon in the chat box.
 
-2. **Tell Claude to install the Revit bridge.** That is the whole step, in
-   plain words. It runs the `revit_install_bridge` tool, which copies the
-   bundled add-in and its `.addin` manifest into
-   `%APPDATA%\Autodesk\Revit\Addins\<version>\` for every Revit it finds.
+> **If the server shows as failed**, Claude Desktop could not find `npx` on its
+> `PATH`. Give it absolute paths instead — `where.exe node` and
+> `where.exe npx.cmd` print them:
+>
+> ```json
+> {
+>   "mcpServers": {
+>     "revit": {
+>       "command": "C:\\Program Files\\nodejs\\npx.cmd",
+>       "args": ["-y", "github:rui-branco/revit-mcp"]
+>     }
+>   }
+> }
+> ```
+>
+> Running from a local clone avoids the question entirely: set `command` to your
+> `node.exe` and `args` to `["C:\\path\\to\\revit-mcp\\index.js"]`.
 
-   Revit does **not** need to be running, and this tool works before the bridge
-   exists — it never talks to the bridge, it shells out to a PowerShell
-   installer. Re-running it is safe. (Doing it by hand instead:
-   [Installing without Claude](#installing-without-claude).)
+#### Other MCP clients
 
-3. **Restart Revit.** Revit only scans the Addins folder at startup, so the
-   bridge does not load until Revit is restarted.
+Any client that speaks MCP over stdio works. Run `npx -y github:rui-branco/revit-mcp`
+as the server command; it needs no arguments and no environment beyond the
+optional [environment variables](#environment-variables).
 
-4. **Approve the add-in when Revit asks** — see the next section. This happens
-   once.
+### Step 2 — Install the Revit bridge add-in
 
-5. **Open a model**, then ask Claude to run `revit_status`. That confirms the
-   whole chain end to end.
+Ask Claude to **install the Revit bridge**. That is the whole step, in plain
+words. It runs the `revit_install_bridge` tool, which copies the bundled add-in
+and its `.addin` manifest into `%APPDATA%\Autodesk\Revit\Addins\<version>\` for
+every Revit it finds.
 
-To remove it again, ask Claude to uninstall the Revit bridge
-(`revit_uninstall_bridge`), then restart Revit.
+Revit does **not** need to be running, and this tool works before the bridge
+exists — it never talks to the bridge, it shells out to a PowerShell installer.
+Re-running it is safe. (Doing it by hand instead:
+[Manual install](#manual-install-without-claude).)
 
-### Revit will warn you: the add-in is unsigned
+### Step 3 — Restart Revit and approve the add-in
 
-**Expect this — it is not a failure.** The add-in is not code-signed, so the
-first time Revit loads it you get a **"Security - Unsigned Add-In"** dialog
-naming `RevitMcpBridge` and an unknown publisher.
+Revit only scans the Addins folder at startup, so the bridge does not load until
+Revit is restarted.
 
-Choose **Always Load**. Picking *Load Once* means the dialog returns at every
-launch; picking *Do Not Load* means the bridge never starts and every tool call
-will report that nothing is listening.
+On that first load Revit shows a **"Security - Unsigned Add-In"** dialog naming
+`RevitMcpBridge` and an unknown publisher. **Expect this — it is not a failure.**
+The add-in is not code-signed.
+
+Choose **Always Load**. *Load Once* means the dialog returns at every launch;
+*Do Not Load* means the bridge never starts and every tool call will report that
+nothing is listening — and Revit remembers that answer.
 
 If you are on a machine where someone else decides what may run, that is the
-decision point — the add-in opens a loopback HTTP listener inside Revit and can
-modify open models, and the source is all here for review.
+decision point; see [Security](#security).
 
-### Installing without Claude
+### Step 4 — Verify the chain
+
+Open a model, then ask Claude to run `revit_status`. It reports the bridge
+version, the Revit version and the active document — which confirms client →
+Node → add-in → model end to end.
+
+### Uninstalling
+
+Ask Claude to uninstall the Revit bridge (`revit_uninstall_bridge`), then restart
+Revit. Remove the server from your client with `claude mcp remove revit`, or by
+deleting the entry from `claude_desktop_config.json`.
+
+### Manual install, without Claude
 
 The same work, straight from the installed package. From the package's
 `revit-bridge` directory:
@@ -502,6 +602,31 @@ call already under way cannot be cancelled.
 Revit sitting on the start page, or between documents. Open a model and retry.
 `revit_status` is the one call that deliberately tolerates this, which is how
 you can tell this case apart from the three above.
+
+## Security
+
+What this actually grants, stated plainly, so the decision is an informed one.
+
+- **The add-in runs inside `Revit.exe` with full Revit API access.** It can read,
+  modify and delete anything in the open model, and open, save or close
+  documents. There is no read-only mode.
+- **It opens an HTTP listener inside Revit**, bound to the `127.0.0.1` literal
+  rather than a wildcard, on port `48884`. It is not reachable from the network,
+  but it is **unauthenticated**: any local process that can reach loopback can
+  drive your Revit session. On a shared or untrusted machine, that matters.
+- **The add-in is not code-signed**, which is why Revit shows the unsigned
+  add-in dialog. Signing costs money and buys you nothing you cannot get by
+  reading the source, which is all here.
+- **Auto-dismiss answers Revit's dialogs for you.** Destructive-sounding prompts
+  get Cancel and ordinary ones get OK, but a prompt nobody read is still a
+  prompt nobody read. Turn it off with `revit_set_auto_dismiss` when you are at
+  the keyboard, and read `revit_diagnostics` after a batch of writes.
+- **Work on a copy of any model you care about**, especially on a first run.
+  Revit's undo history is per session and a timed-out write may still have
+  landed.
+
+Found something? Open an issue, or report it privately through
+[GitHub security advisories](https://github.com/rui-branco/revit-mcp/security/advisories/new).
 
 ## Development
 
