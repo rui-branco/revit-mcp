@@ -18,6 +18,18 @@ Claude Code route uses `npx`, so it wants Node 18+.
 
 ### 1. Register the server
 
+#### Any Claude app — plugin (recommended)
+
+Two commands, and it **updates itself** from then on:
+
+```
+/plugin marketplace add rui-branco/revit-mcp
+/plugin install revit@revit-tools
+```
+
+Works in Claude Code, Claude Desktop and Cowork. Later versions arrive via
+`/plugin update` — no files to download, unlike the extension below.
+
 #### Claude Desktop — extension
 
 Claude Desktop installs this as a **Desktop Extension**, Anthropic's packaged

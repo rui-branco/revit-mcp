@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "revit": {
+      "command": "npx",
+      "args": ["-y", "@rui.branco/revit-mcp"]
+    }
+  }
+}

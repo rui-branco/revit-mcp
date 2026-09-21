@@ -1,0 +1,14 @@
+{
+  "name": "revit",
+  "description": "Query and edit the Autodesk Revit model open on your Windows desktop. 88 tools covering elements, parameters, geometry, sheets, views, schedules and PDF export.",
+  "version": "1.0.1",
+  "author": {
+    "name": "rui-branco",
+    "url": "https://github.com/rui-branco"
+  },
+  "homepage": "https://github.com/rui-branco/revit-mcp#readme",
+  "repository": "https://github.com/rui-branco/revit-mcp",
+  "license": "MIT",
+  "keywords": ["revit", "autodesk", "bim", "architecture", "cad"],
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "revit-tools",
+  "description": "Drive Autodesk Revit from Claude.",
+  "owner": {
+    "name": "rui-branco",
+    "url": "https://github.com/rui-branco"
+  },
+  "plugins": [
+    {
+      "name": "revit",
+      "source": "./plugins/revit",
+      "displayName": "Revit",
+      "description": "Query and edit the Autodesk Revit model open on your Windows desktop: levels, elements and parameters, geometry, sheets, views, schedules and native PDF exports. 88 tools.",
+      "homepage": "https://github.com/rui-branco/revit-mcp#readme",
+      "repository": "https://github.com/rui-branco/revit-mcp",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": ["revit", "autodesk", "bim", "architecture", "cad"]
+    }
+  ]
+}
