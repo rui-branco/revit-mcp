@@ -18,16 +18,19 @@ and nothing to copy by hand.
 
 ### 1. Register the server
 
-Same plugin either way. Type both lines into the chat box, one after the other.
+Same plugin either way, but the two apps add it differently.
 
-**Claude Desktop** — in any chat:
+> It has to be the **Windows machine Revit runs on**. The server reaches Revit
+> through a listener bound to `127.0.0.1`, so a cloud session or another
+> computer cannot see it.
 
-```
-/plugin marketplace add rui-branco/revit-mcp
-/plugin install revit@revit-tools
-```
+**Claude Desktop** — through Settings, not the chat box:
 
-**Claude Code** — in the CLI:
+1. **Settings → Plugins → Add ▾ → Add marketplace → Add from a repository**
+2. Enter `rui-branco/revit-mcp`
+3. Install **revit** from the marketplace that appears
+
+**Claude Code** — slash commands in the CLI:
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
@@ -45,8 +48,8 @@ claude plugin install revit@revit-tools
 </details>
 
 That is the whole step. The plugin updates itself from this repo, so there is
-nothing to re-download when a new version ships; `/plugin update` pulls it
-early if you do not want to wait.
+nothing to re-download when a new version ships; in Claude Code,
+`/plugin update` pulls it early if you do not want to wait.
 
 <details>
 <summary><b>Other ways to install</b></summary>
