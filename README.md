@@ -10,10 +10,9 @@
 it, and produce a full drawing set in plain language — levels and elements,
 sheets and schedules, views and PDF exports.
 
-**Windows · Revit 2025, 2026 or 2027 · Node.js 18+.** The Revit add-in ships
-precompiled, so there is nothing to build and no .NET SDK to install. `npm` is
-never run at startup — the Desktop extension carries its dependencies, and the
-Claude Code route fetches the package once via `npx`.
+**Windows · Revit 2025, 2026 or 2027.** The add-in ships precompiled — nothing
+to build, no .NET SDK. The Claude Desktop extension needs no Node.js either; the
+Claude Code route uses `npx`, so it wants Node 18+.
 
 ## Installation
 
@@ -21,17 +20,23 @@ Claude Code route fetches the package once via `npx`.
 
 #### Claude Desktop — extension
 
+Claude Desktop installs this as a **Desktop Extension**, Anthropic's packaged
+format for MCP servers. No JSON, no terminal.
+
 1. **[⬇ Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb)**
-2. In Claude Desktop, open **Settings → Extensions**
-3. **Drag the `.mcpb` file onto that window**, then press **Install**
+2. Open Claude Desktop → **Settings → Extensions**
+3. **Drag `revit-mcp.mcpb` onto the window** (or use **Advanced settings →
+   Install extension…** and pick the file)
+4. Press **Install**
 
-No JSON to edit and nothing to download at runtime: the extension carries the
-server, its dependencies and the Revit add-in. Bridge URL and request timeout
-are exposed as settings under **Settings → Extensions → Revit**.
+The extension carries the server, its dependencies and the Revit add-in, and
+runs on Claude Desktop's built-in Node runtime — **neither Node.js nor npm has
+to be installed**. Bridge URL and request timeout appear under **Settings →
+Extensions → Revit**.
 
-> Double-clicking the file only works if Claude Desktop has registered the
-> `.mcpb` file type; on many installs it has not, so use the drag-and-drop step
-> above.
+> Double-clicking the file works only where Claude Desktop has registered the
+> `.mcpb` file type. Many installs have not, so prefer the drag-and-drop or
+> **Install extension…** route above.
 
 <details>
 <summary>Or configure it by hand</summary>
