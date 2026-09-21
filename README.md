@@ -18,17 +18,21 @@ and nothing to copy by hand.
 
 ### 1. Register the server
 
-Same plugin either way, but the two apps add it differently.
+Works in **Claude Desktop**, **Claude Cowork** and **Claude Code** — the same
+plugin, added two different ways.
 
 > It has to be the **Windows machine Revit runs on**. The server reaches Revit
 > through a listener bound to `127.0.0.1`, so a cloud session or another
-> computer cannot see it.
+> computer cannot see it. That also means a plain Claude Desktop chat, which
+> runs in the cloud, cannot use these tools — Cowork and Claude Code can.
 
-**Claude Desktop** — through Settings, not the chat box:
+**Claude Desktop and Cowork** — through Settings, not the chat box:
 
 1. **Settings → Plugins → Add ▾ → Add marketplace → Add from a repository**
 2. Enter `rui-branco/revit-mcp`
 3. Install **revit** from the marketplace that appears
+
+Once installed it is available in Cowork and in Claude Code on that machine.
 
 **Claude Code** — slash commands in the CLI:
 
