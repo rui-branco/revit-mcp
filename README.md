@@ -20,18 +20,18 @@ Do this on the PC that has Revit. Takes about a minute.
 
 ### 1. Add the plugin
 
-**Claude Desktop**
-
-1. **Settings → Plugins → Add → Add marketplace → Add from a repository**
-2. Paste `rui-branco/revit-mcp`
-3. Click **Install** on **Revit**
-
 **Claude Cowork and Claude Code** — type these two lines:
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
 /plugin install revit@revit-tools
 ```
+
+**Claude Desktop**
+
+1. **Settings → Plugins → Add → Add marketplace → Add from a repository**
+2. Paste `rui-branco/revit-mcp`
+3. Click **Install** on **Revit**
 
 ### 2. Restart Revit
 
