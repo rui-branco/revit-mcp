@@ -16,50 +16,59 @@ and nothing to copy by hand.
 
 ## Installation
 
-### 1. Register the server
+Do this on the PC that has Revit. Takes about a minute.
 
-Works in **Claude Desktop**, **Claude Cowork** and **Claude Code** — the same
-plugin, added two different ways.
+### 1. Add the plugin
 
-> It has to be the **Windows machine Revit runs on**. The server reaches Revit
-> through a listener bound to `127.0.0.1`, so a cloud session or another
-> computer cannot see it. That also means a plain Claude Desktop chat, which
-> runs in the cloud, cannot use these tools — Cowork and Claude Code can.
+**Claude Desktop**
 
-**Claude Desktop and Cowork** — through Settings, not the chat box:
+1. **Settings → Plugins → Add → Add marketplace → Add from a repository**
+2. Paste `rui-branco/revit-mcp`
+3. Click **Install** on **Revit**
 
-1. **Settings → Plugins → Add ▾ → Add marketplace → Add from a repository**
-2. Enter `rui-branco/revit-mcp`
-3. Install **revit** from the marketplace that appears
+**Claude Cowork** — same steps as Claude Desktop above. They share one
+Settings page, so adding it once covers both.
 
-Once installed it is available in Cowork and in Claude Code on that machine.
-
-**Claude Code** — slash commands in the CLI:
+**Claude Code**
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
 /plugin install revit@revit-tools
 ```
 
-<details>
-<summary>Or from your terminal, without opening Claude Code</summary>
+### 2. Restart Revit
 
-```bash
-claude plugin marketplace add rui-branco/revit-mcp
-claude plugin install revit@revit-tools
-```
+Revit shows a security warning about an unsigned add-in the first time. Click
+**Always Load**. If you click *Do Not Load*, Revit remembers it and nothing will
+work.
+
+### 3. Check it
+
+Open a model and ask Claude: *"run revit_status"*. It should answer with your
+Revit version and the open file.
+
+That's it. The plugin updates itself, so you never download anything again.
+
+<details>
+<summary>Good to know</summary>
+
+**It only works on the PC running Revit.** Claude talks to Revit through your
+own computer, so it cannot reach a Revit on another machine. That also means a
+normal Claude Desktop chat cannot use it — use Cowork or Claude Code, which run
+on your PC.
+
+**The Revit add-in installs itself** the first time the server starts, so
+there is no separate install step. If that ever fails, ask Claude to *install
+the Revit bridge* and it will do it on demand. To turn the automatic install
+off, set `REVIT_MCP_NO_AUTO_INSTALL=1`.
 
 </details>
 
-That is the whole step. The plugin updates itself from this repo, so there is
-nothing to re-download when a new version ships; in Claude Code,
-`/plugin update` pulls it early if you do not want to wait.
-
 <details>
-<summary><b>Other ways to install</b></summary>
+<summary>Other ways to install</summary>
 
-These exist for completeness. The plugin above is the supported path, and the
-only one that updates on its own.
+The plugin above is the supported path, and the only one that updates on its
+own.
 
 **Claude Code, without the plugin**
 
@@ -97,80 +106,6 @@ yours).
 Run `npx -y @rui.branco/revit-mcp` as the server command. It takes no
 arguments and needs no environment beyond the optional
 [configuration](#configuration).
-
-</details>
-
-### 2. Install the Revit add-in — automatic
-
-Nothing to do. The server installs the add-in itself the first time it starts:
-it looks for `RevitMcpBridge.addin` in
-`%APPDATA%\Autodesk\Revit\Addins\<version>\` and, when no Revit has it, copies
-the bundled add-in and its manifest into place for every Revit it finds. That
-runs in the background on Windows, so it never delays or breaks the server, and
-once the add-in is there it does nothing at all.
-
-**If it is turned off or fails**, ask Claude to **install the Revit bridge**.
-That runs `revit_install_bridge` — the same installer, on demand. Revit need not
-be running, and re-running is safe. Auto-install is off whenever
-`REVIT_MCP_NO_AUTO_INSTALL` is set; see [Configuration](#configuration).
-
-Either way the add-in is only on disk at this point. Revit does not load it
-until it restarts, which is step 3.
-
-### 3. Restart Revit and approve the add-in
-
-Revit scans the Addins folder only at startup. On first load it shows a
-**"Security - Unsigned Add-In"** dialog for `RevitMcpBridge` — this is expected,
-the add-in is not code-signed. Choose **Always Load**; *Do Not Load* is
-remembered and the bridge will never start.
-
-### 4. Verify
-
-Open a model and ask Claude to run `revit_status`. It reports the bridge
-version, Revit version and active document, confirming the chain end to end.
-
-<details>
-<summary><b>Installing manually, or uninstalling</b></summary>
-
-From the package's `revit-bridge` directory:
-
-```powershell
-.\install.ps1
-```
-
-| Flag | Effect |
-| --- | --- |
-| `-RevitVersion 2026` | Only that version, even outside the default Program Files location. |
-| `-Build` | Compile a fresh add-in with `dotnet build -c Release`. Needs the .NET SDK. |
-| `-SkipBuild` | Never build. Already the default when the bundled add-in is present. |
-| `-Uninstall` | Remove the manifest and the install folder. |
-| `-Json` | Emit one JSON result object as the only stdout output — the mode the MCP tools use. |
-
-Exit codes: `0` success, `1` unhandled failure, `2` no Revit found, `3` no
-supported Revit version, `4` build failed or .NET SDK missing, `5` no add-in to
-install. Runs under Windows PowerShell 5.1 and PowerShell 7.
-
-To uninstall: ask Claude to uninstall the Revit bridge
-(`revit_uninstall_bridge`) and restart Revit, then `claude mcp remove revit` or
-delete the entry from `claude_desktop_config.json`.
-
-</details>
-
-<details>
-<summary><b>Version support and prerequisites</b></summary>
-
-| | |
-| --- | --- |
-| **OS** | Windows (Revit has no macOS build) |
-| **Revit** | 2025, 2026 or 2027 |
-| **Node.js** | 18 or newer |
-| **.NET SDK** | Not required — only to build the C# side yourself |
-
-One prebuilt add-in covers all three Revit versions: it is compiled against the
-Revit 2025 reference assemblies, which load unchanged in 2026 and 2027. Tested
-end to end against Revit 2027.3. **Revit LT is unsupported** (no add-in API) and
-**2024 and earlier are refused** (.NET Framework 4.8 cannot load a
-`net8.0-windows` assembly).
 
 </details>
 
