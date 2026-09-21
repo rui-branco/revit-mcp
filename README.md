@@ -18,12 +18,31 @@ Claude Code route uses `npx`, so it wants Node 18+.
 
 ### 1. Register the server
 
-Two commands, in **Claude Code or Claude Desktop** — same plugin, either app:
+Same plugin either way. Type both lines into the chat box, one after the other.
+
+**Claude Desktop** — in any chat:
 
 ```
 /plugin marketplace add rui-branco/revit-mcp
 /plugin install revit@revit-tools
 ```
+
+**Claude Code** — in the CLI:
+
+```
+/plugin marketplace add rui-branco/revit-mcp
+/plugin install revit@revit-tools
+```
+
+<details>
+<summary>Or from your terminal, without opening Claude Code</summary>
+
+```bash
+claude plugin marketplace add rui-branco/revit-mcp
+claude plugin install revit@revit-tools
+```
+
+</details>
 
 That is the whole step. The plugin updates itself from this repo, so there is
 nothing to re-download when a new version ships; `/plugin update` pulls it
