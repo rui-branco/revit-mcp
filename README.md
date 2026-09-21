@@ -45,7 +45,7 @@ keeping any servers already there:
   "mcpServers": {
     "revit": {
       "command": "npx",
-      "args": ["-y", "github:rui-branco/revit-mcp"]
+      "args": ["-y", "@rui.branco/revit-mcp"]
     }
   }
 }
@@ -64,7 +64,7 @@ If the server shows as failed, Claude Desktop could not find `npx` on its
 #### Claude Code — one command
 
 ```bash
-claude mcp add revit --scope user -- npx -y github:rui-branco/revit-mcp
+claude mcp add revit --scope user -- npx -y @rui.branco/revit-mcp
 ```
 
 `--scope user` enables it in every project; `--scope project` writes it to the
@@ -73,7 +73,7 @@ repo's `.mcp.json` instead, to share with a team. Check it with `claude mcp list
 <details>
 <summary><b>Other MCP clients</b></summary>
 
-Any stdio MCP client works. Use `npx -y github:rui-branco/revit-mcp` as the
+Any stdio MCP client works. Use `npx -y @rui.branco/revit-mcp` as the
 server command; it takes no arguments and needs no environment beyond the
 optional [configuration](#configuration).
 
