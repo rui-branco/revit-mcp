@@ -31,7 +31,8 @@
     "revit-bridge/install.ps1",
     "revit-bridge/dist/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "manifest.json"
   ],
   "engines": {
     "node": ">=18"
@@ -42,7 +43,8 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "build:bridge": "node scripts/build-bridge.mjs",
-    "prepublishOnly": "npm run build:bridge && npm test"
+    "prepublishOnly": "npm run build:bridge && npm test",
+    "pack:desktop": "npm run build:bridge && npx -y @anthropic-ai/mcpb@2.1.2 pack . revit-mcp.mcpb"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"

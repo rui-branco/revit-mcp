@@ -9,3 +9,6 @@ __pycache__/
 bin/
 obj/
 !revit-bridge/dist/
+
+# built desktop extension bundle
+*.mcpb

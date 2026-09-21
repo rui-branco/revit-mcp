@@ -15,26 +15,19 @@ precompiled, so there is nothing to build and no .NET SDK to install.
 
 ## Installation
 
-> **Not yet on npm.** Install from GitHub with `npx -y github:rui-branco/revit-mcp`.
-> Once published, `npx -y @rui.branco/revit-mcp` will work identically.
-
 ### 1. Register the server
 
-<details open>
-<summary><b>Claude Code</b></summary>
+#### Claude Desktop — one click
 
-```bash
-claude mcp add revit --scope user -- npx -y github:rui-branco/revit-mcp
-claude mcp list
-```
+**[⬇ Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb)**,
+then **double-click it**. Claude Desktop opens its extension installer; press
+**Install**. Nothing to edit, nothing to type.
 
-`--scope user` enables it in every project; `--scope project` writes it to the
-repo's `.mcp.json` instead, to share with a team.
-
-</details>
+The extension bundles the server and the Revit add-in together. Settings for the
+bridge URL and request timeout are exposed in **Settings → Extensions → Revit**.
 
 <details>
-<summary><b>Claude Desktop</b></summary>
+<summary>Or configure it by hand</summary>
 
 Open **Settings → Developer → Edit Config** (that is
 `%APPDATA%\Claude\claude_desktop_config.json`) and add the `revit` entry,
@@ -52,7 +45,7 @@ keeping any servers already there:
 ```
 
 Then **quit Claude Desktop from the system tray** — closing the window is not
-enough — and reopen it. The Revit tools appear under the tools icon.
+enough — and reopen it.
 
 If the server shows as failed, Claude Desktop could not find `npx` on its
 `PATH`. Use absolute paths instead (`where.exe npx.cmd` prints yours), or point
@@ -60,6 +53,15 @@ If the server shows as failed, Claude Desktop could not find `npx` on its
 `["C:\\path\\to\\revit-mcp\\index.js"]`.
 
 </details>
+
+#### Claude Code — one command
+
+```bash
+claude mcp add revit --scope user -- npx -y github:rui-branco/revit-mcp
+```
+
+`--scope user` enables it in every project; `--scope project` writes it to the
+repo's `.mcp.json` instead, to share with a team. Check it with `claude mcp list`.
 
 <details>
 <summary><b>Other MCP clients</b></summary>

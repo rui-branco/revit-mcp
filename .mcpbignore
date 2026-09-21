@@ -1,0 +1,15 @@
+.git/
+.github/
+.gitignore
+.idea/
+docs/
+tests/
+scripts/
+revit-bridge/src/
+revit-bridge/handlers/
+revit-bridge/bin/
+revit-bridge/obj/
+revit-bridge/*.csproj
+revit-bridge/README.md
+revit-bridge/.gitignore
+*.mcpb

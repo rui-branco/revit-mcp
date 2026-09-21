@@ -1,0 +1,416 @@
+{
+  "manifest_version": "0.2",
+  "name": "revit-mcp",
+  "display_name": "Revit",
+  "version": "1.0.0",
+  "description": "Query and edit the Autodesk Revit model open on your desktop.",
+  "long_description": "Connects Claude to the Revit model currently open on this Windows machine through a bundled C# bridge add-in. Query levels and elements, read and write parameters, model geometry, and produce a full drawing set: sheets, views, schedules and PDF exports. Requires Autodesk Revit 2025, 2026 or 2027, and a one-time bridge install run from inside Claude.",
+  "author": {
+    "name": "rui-branco",
+    "url": "https://github.com/rui-branco"
+  },
+  "homepage": "https://github.com/rui-branco/revit-mcp",
+  "documentation": "https://github.com/rui-branco/revit-mcp#readme",
+  "support": "https://github.com/rui-branco/revit-mcp/issues",
+  "license": "MIT",
+  "keywords": [
+    "revit",
+    "autodesk",
+    "bim",
+    "architecture",
+    "cad"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/index.js"
+      ],
+      "env": {
+        "REVIT_MCP_URL": "${user_config.bridge_url}",
+        "REVIT_MCP_TIMEOUT": "${user_config.timeout_ms}"
+      }
+    }
+  },
+  "user_config": {
+    "bridge_url": {
+      "type": "string",
+      "title": "Bridge URL",
+      "description": "Where the Revit bridge add-in listens. Change only for a second Revit instance.",
+      "default": "http://localhost:48884/revit-mcp",
+      "required": false
+    },
+    "timeout_ms": {
+      "type": "string",
+      "title": "Request timeout (ms)",
+      "description": "How long to wait for Revit to answer a single request.",
+      "default": "30000",
+      "required": false
+    }
+  },
+  "tools": [
+    {
+      "name": "revit_add_text_notes",
+      "description": "Add text notes to a view — the annotation on a detail, a plan or a section."
+    },
+    {
+      "name": "revit_apply_view_template",
+      "description": "Put one view template onto many views in a single undo step."
+    },
+    {
+      "name": "revit_assign_material",
+      "description": "Put an existing material on elements that already exist."
+    },
+    {
+      "name": "revit_capture_view_template",
+      "description": "Turn a view that is already drawn the way you want into a reusable view template, and state which parameters it controls."
+    },
+    {
+      "name": "revit_close_project",
+      "description": "Close the active document."
+    },
+    {
+      "name": "revit_configure_schedule",
+      "description": "Reshape how an EXISTING schedule presents the rows it already has: grouping, totals, column headings and widths."
+    },
+    {
+      "name": "revit_create_3d_view",
+      "description": "Create a 3D view — an isometric by default, or a perspective camera with perspective: true."
+    },
+    {
+      "name": "revit_create_directshape",
+      "description": "Create elements from raw geometry, with no family involved."
+    },
+    {
+      "name": "revit_create_drafting_view",
+      "description": "Create a drafting view: a sheet of linework and notes that is not a view of the model at all."
+    },
+    {
+      "name": "revit_create_floor",
+      "description": "Create a floor from a closed boundary: paving, a pool deck, a terrace, or an actual building floor."
+    },
+    {
+      "name": "revit_create_floor_type",
+      "description": "Create a floor type carrying a material and a thickness, by duplicating an existing type and giving it a single structural layer."
+    },
+    {
+      "name": "revit_create_legend",
+      "description": "Create a legend view by duplicating one the document already has — the only way the Revit API can make a legend."
+    },
+    {
+      "name": "revit_create_levels",
+      "description": "Create levels in the active document."
+    },
+    {
+      "name": "revit_create_material",
+      "description": "Create a material with a colour, so the model stops rendering in Revit's default grey."
+    },
+    {
+      "name": "revit_create_pipes",
+      "description": "Model pipe runs — irrigation, drainage — as geometry, with no MEP family involved."
+    },
+    {
+      "name": "revit_create_plan_view",
+      "description": "Create a plan view on a level — a floor plan unless 'view_family_type' names another one."
+    },
+    {
+      "name": "revit_create_project_parameter",
+      "description": "Create a project parameter and bind it to one or more categories — the way to add a field Revit does not have, such as a Phase on sheets tha"
+    },
+    {
+      "name": "revit_create_schedule",
+      "description": "Create a schedule for a category, with the named fields added in order."
+    },
+    {
+      "name": "revit_create_section_view",
+      "description": "Create a section view."
+    },
+    {
+      "name": "revit_create_sheets",
+      "description": "Create sheets in the active document."
+    },
+    {
+      "name": "revit_create_toposolid",
+      "description": "Create the site surface from a cloud of survey points."
+    },
+    {
+      "name": "revit_create_wall_type",
+      "description": "Create a wall type carrying a material and a thickness, by duplicating an existing type and giving it a single structural layer."
+    },
+    {
+      "name": "revit_create_walls",
+      "description": "Create walls on a level from 2D curves."
+    },
+    {
+      "name": "revit_delete_elements",
+      "description": "Delete elements by id."
+    },
+    {
+      "name": "revit_diagnostics",
+      "description": "Read what the bridge suppressed: the Revit dialogs it answered automatically and the transaction warnings it resolved, oldest first, plus wh"
+    },
+    {
+      "name": "revit_draw_detail_lines",
+      "description": "Draw detail lines in a drafting view or a plan — the linework of a construction detail."
+    },
+    {
+      "name": "revit_duplicate_view",
+      "description": "Duplicate a view."
+    },
+    {
+      "name": "revit_edit_titleblock_family",
+      "description": "Edit the INSIDE of a title block family and load it back into this same project: remove the stock logo and the literal consultant placeholde"
+    },
+    {
+      "name": "revit_excavate_toposolid",
+      "description": "Cut a toposolid with the elements that should be sunk into it — a pool, a basement, a sunken path — using Revit's native Toposolid.ExcavateB"
+    },
+    {
+      "name": "revit_export_pdf",
+      "description": "Export named views and sheets to PDF through Revit's own PDF exporter — vectors, on white paper, at the sheet's real size."
+    },
+    {
+      "name": "revit_export_view_image",
+      "description": "Export a view to a raster image on disk — the only way anything outside Revit gets to see what the model looks like."
+    },
+    {
+      "name": "revit_flatten_toposolid",
+      "description": "Flatten a region of the site surface to one elevation, so paving can sit on graded terrain instead of fighting it — this is the fix for Revi"
+    },
+    {
+      "name": "revit_get_browser_organization",
+      "description": "Inspect how the Project Browser currently groups the Sheets section, and find out honestly what can be done about it."
+    },
+    {
+      "name": "revit_get_elements",
+      "description": "Read specific elements by id."
+    },
+    {
+      "name": "revit_get_material_appearance",
+      "description": "Read the appearance asset behind a material — the rendered look, as opposed to the shading colour revit_create_material sets."
+    },
+    {
+      "name": "revit_get_selection",
+      "description": "Read what the user currently has selected in the Revit UI."
+    },
+    {
+      "name": "revit_get_sheet_layout",
+      "description": "Measure where everything on a sheet actually is, in feet on the PAPER."
+    },
+    {
+      "name": "revit_get_view_crop",
+      "description": "Read the crop of one view or a batch of them: whether it is on, whether the rectangle is drawn, and where it actually is."
+    },
+    {
+      "name": "revit_get_view_graphics",
+      "description": "Read what a view is actually drawn with: display style, detail level, the view template that may be overriding both, the shadow and sunlight"
+    },
+    {
+      "name": "revit_get_view_graphics_command_status",
+      "description": "What became of the last cast-shadows command revit_set_view_graphics posted: when it was posted, whether Revit has been idle since (which is"
+    },
+    {
+      "name": "revit_get_warnings",
+      "description": "Read the warnings the model is carrying right now — Revit's own Review Warnings list."
+    },
+    {
+      "name": "revit_hide_elements_in_view",
+      "description": "Hide elements in ONE view, permanently — the 'Hide in View > Elements' override Revit stores on that view."
+    },
+    {
+      "name": "revit_hide_view_categories",
+      "description": "Turn whole categories off in one view."
+    },
+    {
+      "name": "revit_inspect_elements",
+      "description": "Measure elements: everything revit_get_elements leaves out."
+    },
+    {
+      "name": "revit_inspect_titleblock_family",
+      "description": "Read what is INSIDE a title block family: the only way to find out why a sheet prints a vendor logo, a literal consultant placeholder or a l"
+    },
+    {
+      "name": "revit_install_bridge",
+      "description": "Install the Revit MCP bridge add-in: copies the add-in that ships with this package into Revit's Addins folder."
+    },
+    {
+      "name": "revit_list_categories",
+      "description": "List the categories present in the active document with an element count each."
+    },
+    {
+      "name": "revit_list_family_symbols",
+      "description": "List the family types loaded in the document: id, family name, type name and category."
+    },
+    {
+      "name": "revit_list_legends",
+      "description": "List the legend views in the document: id, name and scale."
+    },
+    {
+      "name": "revit_list_levels",
+      "description": "List the levels in the active document: id, name and elevation (Revit internal units, decimal feet)."
+    },
+    {
+      "name": "revit_list_materials",
+      "description": "List the materials in the document: id, name, colour as {r, g, b}, and the id of its appearance asset when it has one."
+    },
+    {
+      "name": "revit_list_sheet_collections",
+      "description": "List the sheet collections in the active document — the collapsible groups Revit draws under Sheets in the Project Browser — with each colle"
+    },
+    {
+      "name": "revit_list_sheets",
+      "description": "List the sheets in the active document: id, sheet number and name, ordered by sheet number."
+    },
+    {
+      "name": "revit_list_titleblocks",
+      "description": "List the title block family types loaded in the active document: id, family name and type name."
+    },
+    {
+      "name": "revit_list_view_templates",
+      "description": "List the view templates in the model: id, name, view type, and the parameters each template CONTROLS with their labels."
+    },
+    {
+      "name": "revit_list_views",
+      "description": "List the non-template views in the document: id, name, view type, and whether each is already placed on a sheet."
+    },
+    {
+      "name": "revit_load_families",
+      "description": "Load .rfa family files into the project — real trees, benches, bollards, light fittings, doors and windows instead of DirectShape primitives"
+    },
+    {
+      "name": "revit_move_elements",
+      "description": "Move elements by a vector in feet — lift furniture out of a slab, shift a tree off a path — without rebuilding them."
+    },
+    {
+      "name": "revit_new_project",
+      "description": "Create a new Revit project from a template and open it, without using the Revit UI."
+    },
+    {
+      "name": "revit_open_project",
+      "description": "Open an existing .rvt file and make it the active document, without using the Revit UI."
+    },
+    {
+      "name": "revit_override_view_categories",
+      "description": "Override the graphics of whole categories in ONE view — the other half of the Visibility/Graphics dialog, and what stops a drawing set readi"
+    },
+    {
+      "name": "revit_place_families",
+      "description": "Place one family instance per point — trees, shrubs, light fittings, furniture."
+    },
+    {
+      "name": "revit_place_openings",
+      "description": "Place doors and windows IN walls — the tool for family instances that have to cut their host, which is why it is not revit_place_families wi"
+    },
+    {
+      "name": "revit_place_planting",
+      "description": "Plant trees: one element in the Planting category per point, each a trunk cylinder with a crown sphere sitting on top of it."
+    },
+    {
+      "name": "revit_place_sprinklers",
+      "description": "Place sprinkler heads: one small element per point, a cylinder standing proud of the ground."
+    },
+    {
+      "name": "revit_place_views_on_sheets",
+      "description": "Put views on sheets."
+    },
+    {
+      "name": "revit_query_elements",
+      "description": "Find elements by category and/or level and/or type name."
+    },
+    {
+      "name": "revit_read_schedule",
+      "description": "Read the text of a schedule, cell by cell."
+    },
+    {
+      "name": "revit_reload_bridge",
+      "description": "Reload the bridge's endpoint logic from disk without restarting Revit, after rebuilding the add-in."
+    },
+    {
+      "name": "revit_save",
+      "description": "Save the active document in place."
+    },
+    {
+      "name": "revit_save_as",
+      "description": "Save the active document to a new path and carry on working in it."
+    },
+    {
+      "name": "revit_scale_perspective_crop",
+      "description": "Make ONE perspective 3D view bigger or smaller on its sheet, proportions locked."
+    },
+    {
+      "name": "revit_set_auto_dismiss",
+      "description": "Turn automatic dialog dismissal on or off, and optionally empty the diagnostics buffer."
+    },
+    {
+      "name": "revit_set_material_appearance",
+      "description": "Edit the appearance asset behind a material by naming the properties to write."
+    },
+    {
+      "name": "revit_set_material_texture",
+      "description": "Put a real texture bitmap on an existing material, which is the difference between a surface that is green and one that looks like grass."
+    },
+    {
+      "name": "revit_set_parameters",
+      "description": "Set one parameter to the same value on one or more elements."
+    },
+    {
+      "name": "revit_set_schedule_position",
+      "description": "Move ONE schedule on its sheet."
+    },
+    {
+      "name": "revit_set_sheet_collections",
+      "description": "Put sheets into native sheet collections, so the Project Browser shows them as collapsible groups."
+    },
+    {
+      "name": "revit_set_sheet_parameters",
+      "description": "Write a parameter value per sheet — a different value on each, which is what stamping a phase or a discipline across a set of sheets is."
+    },
+    {
+      "name": "revit_set_view_background",
+      "description": "Put a sky behind a 3D view."
+    },
+    {
+      "name": "revit_set_view_crop",
+      "description": "Crop one view or a batch of them to a region of the MODEL, in feet."
+    },
+    {
+      "name": "revit_set_view_graphics",
+      "description": "Set a view's graphics, including cast shadows — the one thing revit_set_view_style cannot do."
+    },
+    {
+      "name": "revit_set_view_scale",
+      "description": "Set the view scale on one view or a batch of them."
+    },
+    {
+      "name": "revit_set_view_style",
+      "description": "Set how a view is drawn, which is most of what decides whether an exported image reads as a model or as a diagram."
+    },
+    {
+      "name": "revit_set_view_sun",
+      "description": "Move the sun for a view, which is most of what decides whether a shaded export reads as architecture: it sets the direction every face is li"
+    },
+    {
+      "name": "revit_set_viewport_position",
+      "description": "Move one viewport on its sheet."
+    },
+    {
+      "name": "revit_status",
+      "description": "Check whether Revit is reachable: version, active document name/path, and whether the model is workshared."
+    },
+    {
+      "name": "revit_uninstall_bridge",
+      "description": "Remove the Revit MCP bridge add-in: deletes the .addin manifest and the install folder for every Revit version that has it."
+    }
+  ],
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": [
+      "win32"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}
