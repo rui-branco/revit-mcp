@@ -432,6 +432,24 @@ until the dialog is answered by hand.
 | `did not answer within Nms` | Revit is busy or showing a modal dialog. | Check `revit_diagnostics` — a dialog seen but unanswered is recorded with `answered: false`. Otherwise clear the screen in Revit and retry, or raise `REVIT_MCP_TIMEOUT`. A timed-out write may still have completed. |
 | `no active document` | Revit is on the start page or between documents. | Open a model and retry. `revit_status` deliberately tolerates this, which distinguishes it from the others. |
 
+## Privacy Policy
+
+**This software collects no data.** It has no backend, no account, no telemetry
+and no analytics, and it makes no outbound internet request of its own. Model
+data is processed locally, in memory, and over loopback only.
+
+Model content leaves your machine only if your MCP client sends it onward —
+when that client is Claude, under [Anthropic's privacy
+policy](https://www.anthropic.com/legal/privacy), not this one.
+
+Written locally and never transmitted: the bridge log at
+`%LOCALAPPDATA%\RevitMcpBridge\bridge.log`, the add-in under
+`%APPDATA%\Autodesk\Revit\Addins\`, an in-memory 200-entry diagnostics buffer,
+and any image or PDF you ask a tool to export.
+
+Full policy — collection, storage, third-party sharing, retention and contact:
+**[PRIVACY.md](PRIVACY.md)**.
+
 ## Security
 
 - The add-in runs **inside `Revit.exe` with full Revit API access**. It can

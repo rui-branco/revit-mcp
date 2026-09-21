@@ -412,5 +412,8 @@
     "runtimes": {
       "node": ">=18.0.0"
     }
-  }
+  },
+  "privacy_policies": [
+    "https://github.com/rui-branco/revit-mcp/blob/main/PRIVACY.md"
+  ]
 }

@@ -32,7 +32,8 @@
     "revit-bridge/dist/",
     "README.md",
     "LICENSE",
-    "manifest.json"
+    "manifest.json",
+    "PRIVACY.md"
   ],
   "engines": {
     "node": ">=18"
