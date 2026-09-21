@@ -2,8 +2,7 @@
 
 **Effective date:** 21 September 2026
 **Applies to:** the `revit-mcp` MCP server and its bundled Revit bridge add-in
-(the "Software"), distributed as the npm package `@rui.branco/revit-mcp` and as
-the Claude Desktop extension `revit-mcp.mcpb`.
+(the "Software"), distributed as the npm package `@rui.branco/revit-mcp` and the `revit` plugin.
 
 ## Summary
 

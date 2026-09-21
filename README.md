@@ -44,16 +44,6 @@ claude mcp add revit --scope user -- npx -y @rui.branco/revit-mcp
 `--scope user` enables it in every project; `--scope project` writes it to the
 repo's `.mcp.json` instead, to share with a team.
 
-**Claude Desktop, as a Desktop Extension (.mcpb)**
-
-[Download `revit-mcp.mcpb`](https://github.com/rui-branco/revit-mcp/releases/latest/download/revit-mcp.mcpb),
-then **Settings → Extensions → Advanced settings → Install extension…** and
-pick the file. It bundles the server, its dependencies and the Revit add-in,
-and runs on Claude Desktop's built-in Node runtime, so neither Node.js nor npm
-is needed. **A sideloaded extension never auto-updates** — every new version
-means downloading and installing the file again, which is why the plugin is
-preferred.
-
 **Claude Desktop, by hand**
 
 **Settings → Developer → Edit Config** opens
