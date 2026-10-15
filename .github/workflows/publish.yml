@@ -1,12 +1,16 @@
 name: publish
 
-# Publishes to npm and attaches the Claude Desktop extension to the release.
+# Publishes to npm. This is the ONLY place a release is published from:
+# `npm publish` outside GitHub Actions is refused by prepublishOnly.
 #
 # Runs on Windows because the add-in targets net8.0-windows. It does NOT need
 # Revit installed: the Revit API arrives as a reference-only NuGet package
 # (Revit_All_Main_Versions_API_x64), so a stock runner compiles it fine.
 #
 # Trigger it by publishing a GitHub release, or by hand from the Actions tab.
+#
+# npm auth: a trusted publisher on npmjs.com (OIDC, no secret), or an
+# NPM_TOKEN repo secret as the fallback.
 
 on:
   release:
@@ -19,8 +23,8 @@ on:
         default: false
 
 permissions:
-  contents: write # upload the .mcpb to the release
-  id-token: write # npm provenance
+  contents: read
+  id-token: write # npm trusted publishing + provenance
 
 jobs:
   publish:
@@ -29,20 +33,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 24 ships npm 11, which trusted publishing needs (>= 11.5.1).
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
 
+      # The exact SDK from global.json: a different compiler can emit different
+      # bytes, and the stale check below compares bytes.
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          global-json-file: global.json
 
       - run: npm ci
 
       # Rebuilt here rather than trusting the committed binary, so the tarball
-      # and the .mcpb can never ship a DLL older than the source next to it.
+      # can never ship a DLL older than the source next to it.
       - name: Build the Revit bridge
         run: npm run build:bridge
 
@@ -58,22 +65,8 @@ jobs:
 
       - run: npm test
 
-      - name: Pack the Claude Desktop extension
-        run: npx -y @anthropic-ai/mcpb@2.1.2 pack . revit-mcp.mcpb
-
       - name: Publish to npm
         if: inputs.dry_run != true
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Attach the extension to the release
-        if: github.event_name == 'release' && inputs.dry_run != true
-        run: gh release upload "${{ github.event.release.tag_name }}" revit-mcp.mcpb --clobber
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: revit-mcp.mcpb
-          path: revit-mcp.mcpb
