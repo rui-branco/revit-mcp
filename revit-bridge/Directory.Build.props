@@ -1,0 +1,22 @@
+<Project>
+
+  <!-- Applies to both halves of the bridge (handlers\ has no props of its own, so MSBuild finds
+       this one walking up).
+
+       Release output is committed to dist\ AND rebuilt by the publish workflow, which fails the
+       release if the two differ by a single byte. So a Release build must be a pure function of
+       the source: nothing from the machine, the folder or the git commit may reach the DLLs. The
+       SDK version is pinned for the same reason, in global.json at the repo root. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Deterministic>true</Deterministic>
+    <!-- No PDB: the DLL's debug directory would carry its absolute path (C:\Users\<you>\...).
+         dist\ never shipped the .pdb anyway. -->
+    <DebugType>none</DebugType>
+    <!-- The SDK default stamps the commit into AssemblyInformationalVersion ("1.0.0+<sha>").
+         Committing the rebuilt DLL makes a new commit, so that stamp could never match CI. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Any other path the compiler records (CallerFilePath and friends) comes out as /_/... -->
+    <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
+  </PropertyGroup>
+
+</Project>
