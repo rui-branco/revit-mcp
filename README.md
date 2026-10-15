@@ -446,8 +446,14 @@ cd revit-bridge && .\install.ps1 -Build   # install that local build
 ```
 
 `revit-bridge/dist/` is the compiled add-in that ships with the package, and is
-committed on purpose — that is what spares end users the SDK. `prepublishOnly`
-re-runs `build:bridge` and the tests, so a stale binary cannot be published.
+committed on purpose — that is what spares end users the SDK. Release builds are
+reproducible (same source, same bytes, on any machine), and `global.json` pins
+the exact SDK that guarantees it.
+
+Releases are published by CI only: bump the version, push, and publish a GitHub
+release. The `publish` workflow rebuilds the add-in, fails if it differs from the
+committed `dist/`, runs the tests and publishes to npm. A local `npm publish` is
+refused.
 
 The add-in is **two assemblies**: `RevitMcpBridge.dll` is the loader Revit pins
 for the session (HTTP listener, main-thread pump, dialog handling), and
