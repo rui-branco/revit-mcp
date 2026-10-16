@@ -28,6 +28,7 @@
   "files": [
     "index.js",
     "lib/",
+    "assets/icon.svg",
     "revit-bridge/install.ps1",
     "revit-bridge/dist/",
     "README.md",

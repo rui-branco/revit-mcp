@@ -5,6 +5,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { pathToFileURL } from "url";
 import { autoInstallBridge } from "./lib/auto-install.js";
 import { createBridge } from "./lib/bridge.js";
+import { ICONS } from "./lib/icons.js";
 import { registerReadTools } from "./lib/tools/read.js";
 import { registerWriteTools } from "./lib/tools/write.js";
 import { registerParameterTools } from "./lib/tools/parameters.js";
@@ -79,7 +80,7 @@ Use these tools whenever the user wants to:
 `;
 
 export function createRevitServer(bridge = createBridge()) {
-  const server = new McpServer({ name: "revit", version: "1.0.0" }, { instructions });
+  const server = new McpServer({ name: "revit", version: "1.0.0", icons: ICONS }, { instructions });
 
   registerReadTools(server, bridge);
   registerWriteTools(server, bridge);
